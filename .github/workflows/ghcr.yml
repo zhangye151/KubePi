@@ -4,10 +4,10 @@ on:
   push:
     branches:
       - main
-
+      
 permissions:
   contents: read
-  packages: write   # ⭐ 关键权限（必须有）
+  packages: write
 
 jobs:
   build:
@@ -17,13 +17,25 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # ✅ 设置 Node + 缓存（加速 npm）
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      # ✅ 登录 GHCR（自动用 GITHUB_TOKEN）
       - name: Login to GHCR
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
+      # ✅ 构建镜像（关键：加 npm 加速参数）
       - name: Build Docker image
         run: |
-          docker build -t ghcr.io/${{ github.repository_owner }}/kubepi:latest .
+          docker build \
+            --build-arg NPM_REGISTRY=https://registry.npmmirror.com \
+            -t ghcr.io/${{ github.repository_owner }}/kubepi:latest .
 
+      # ✅ 推送镜像
       - name: Push Docker image
         run: |
           docker push ghcr.io/${{ github.repository_owner }}/kubepi:latest
