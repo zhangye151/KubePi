@@ -147,8 +147,22 @@ export default {
       parentFrom.securityContext.allowPrivilegeEscalation = this.form.allowPrivilegeEscalation || undefined
       parentFrom.securityContext.runAsNonRoot = this.form.runAsNonRoot || undefined
       parentFrom.securityContext.readOnlyRootFilesystem = this.form.readOnlyRootFilesystem || undefined
-      parentFrom.securityContext.runAsUser = this.form.runAsUser || undefined
-      parentFrom.securityContext.runAsGroup = this.form.runAsGroup || undefined
+
+      // --- 需要修改的两行---
+      //parentFrom.securityContext.runAsUser = this.form.runAsUser || undefined
+      //parentFrom.securityContext.runAsGroup = this.form.runAsGroup || undefined
+      
+          // --- 修改开始 ---
+      // 将字符串转为数字，如果转换失败则设为 undefined，避免出现 "" 导致的 YAML 错误
+      parentFrom.securityContext.runAsUser = (this.form.runAsUser !== "" && !isNaN(this.form.runAsUser)) 
+        ? Number(this.form.runAsUser) 
+        : undefined
+      
+      parentFrom.securityContext.runAsGroup = (this.form.runAsGroup !== "" && !isNaN(this.form.runAsGroup)) 
+        ? Number(this.form.runAsGroup) 
+        : undefined
+      // --- 修改结束 ---
+      
       parentFrom.securityContext.procMount = this.form.procMount || undefined
       parentFrom.securityContext.capabilities = {
         add: this.form.capabilities.add.length !== 0 ? this.form.capabilities.add : undefined,
