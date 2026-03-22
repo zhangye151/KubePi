@@ -15,7 +15,7 @@ KubePi 是一个现代化的 K8s 面板。KubePi 允许管理员导入多个 Kub
 ## 快速开始
 本项目修复了在UI界面添加 runAsUser和 runAsGroup=时，会在 yaml 里会自动添加''造成格式错误无法创建Deployment的 BUG。
 ```
-docker run --privileged -d --restart=unless-stopped -p 80:80 1panel/kubepi
+docker run --privileged -d --restart=unless-stopped -p 80:80 ghcr.io/zhangye151/kubepi:latest
 
 # 用户名: admin
 # 密码: kubepi
